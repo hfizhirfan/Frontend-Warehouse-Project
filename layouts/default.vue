@@ -3,7 +3,7 @@
     
     <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="fixed inset-0 bg-gray-900/50 z-20 md:hidden transition-opacity backdrop-blur-sm"></div>
 
-    <aside :class="['fixed md:relative z-30 w-64 h-full bg-[#1e1e2d] text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-xl', isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
+    <aside :class="['fixed md:relative z-50 w-64 h-full bg-[#1e1e2d] text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl md:shadow-xl', isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
       <div class="h-16 px-6 border-b border-gray-800 flex justify-between items-center">
         <div>
           <h2 class="text-2xl font-bold text-blue-500 tracking-wide">LOGO</h2>
@@ -13,50 +13,32 @@
         </button>
       </div>
       
-      <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto pb-20">
-        <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Menu Utama</p>
-        <NuxtLink to="/" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">dashboard</span> 
-          <span class="text-sm">Dashboard</span>
-        </NuxtLink>
-        <NuxtLink to="/inbound" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">move_to_inbox</span> 
-          <span class="text-sm">Inbound</span>
-        </NuxtLink>
-        <NuxtLink to="/outbound" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">qr_code_scanner</span> 
-          <span class="text-sm">Outbound Scanner</span>
-        </NuxtLink>
+      <nav class="flex-1 px-4 py-6 space-y-4">
 
-        <div class="my-4 border-t border-gray-800/50"></div>
-        <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Operasional Lanjutan</p>
-        
-        <NuxtLink to="/konversi" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">layers</span> 
-          <span class="text-sm">Rakitan / Bundling</span>
-        </NuxtLink>
-        <NuxtLink to="/retur" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">assignment_return</span> 
-          <span class="text-sm">Retur & Batal</span>
-        </NuxtLink>
-        <NuxtLink to="/opname" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">fact_check</span> 
-          <span class="text-sm">Stock Opname</span>
-        </NuxtLink>
+        <div v-for="group in menus" :key="group.group">
 
-        <div class="my-4 border-t border-gray-800/50"></div>
-        <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Pengaturan</p>
+          <!-- TITLE -->
+          <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            {{ group.group }}
+          </p>
 
-        <NuxtLink to="/master-data" @click="isSidebarOpen = false" class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group" active-class="bg-blue-600/10 text-blue-500 font-semibold">
-          <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500 transition-colors">database</span> 
-          <span class="text-sm">Master Data</span>
-        </NuxtLink>
+          <!-- ITEMS -->
+          <NuxtLink
+            v-for="menu in group.items"
+            :key="menu.path"
+            :to="menu.path"
+            @click="isSidebarOpen = false"
+            class="flex items-center px-3 py-3 md:py-2.5 text-gray-400 hover:bg-gray-800/50 hover:text-white rounded-lg transition-colors group"
+            active-class="bg-blue-600/10 text-blue-500 font-semibold"
+          >
+            <span class="material-symbols-outlined mr-3 text-lg group-hover:text-blue-500">
+              {{ menu.icon }}
+            </span>
+            <span class="text-sm">{{ menu.name }}</span>
+          </NuxtLink>
 
-        <a href="#" class="flex items-center px-3 py-3 md:py-2.5 text-gray-500 hover:bg-gray-800/20 hover:text-gray-400 rounded-lg transition-colors cursor-not-allowed group" title="Dalam tahap pengembangan backend">
-          <span class="material-symbols-outlined mr-3 text-lg">monitoring</span> 
-          <span class="text-sm">Laporan & Analitik</span>
-        </a>
-        
+        </div>
+
       </nav>
     </aside>
 
@@ -71,15 +53,6 @@
         
         <div class="flex items-center space-x-2 md:space-x-6 w-full md:w-auto justify-end">
           
-          <div v-if="currentUser?.role === 'super_admin'" class="flex items-center bg-gray-50 border border-gray-200 px-2 md:px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors flex-1 md:flex-none max-w-[140px] sm:max-w-xs">
-            <span class="material-symbols-outlined text-gray-400 text-[16px] md:text-sm mr-1 md:mr-2 hidden sm:block">filter_alt</span>
-            <select v-model="selectedBrand" class="bg-transparent text-xs md:text-sm font-semibold text-gray-700 focus:outline-none cursor-pointer w-full truncate">
-              <option v-for="brand in uniqueBrands" :key="brand" :value="brand">{{ brand }}</option>
-            </select>
-          </div>
-          <div v-else-if="currentUser" class="bg-blue-50 text-blue-700 font-bold px-2.5 md:px-3 py-1.5 rounded-lg border border-blue-100 text-[11px] md:text-sm truncate max-w-[120px] sm:max-w-xs">
-            {{ currentUser.assigned_brand }}
-          </div>
 
           <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
 
@@ -98,7 +71,7 @@
         </div>
       </header>
 
-      <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8">
+      <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8 relative z-0 pointer-events-auto">
         <slot />
       </main>
     </div>
@@ -106,25 +79,76 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-useHead({
-  link: [
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0' }
-  ]
-})
-
-const currentUser = useState('user')
-const selectedBrand = useState('selectedBrand', () => 'Semua Brand')
-const uniqueBrands = useState('uniqueBrands', () => ['Semua Brand', 'CA SKIN GLOW', 'Packaging Packing', 'Brand X']) 
-
+const currentUser = useState('user', () => null)
+const role = useState('role', () => 'guest')
 const isSidebarOpen = ref(false)
 
+// ================= MENU DINAMIS =================
+const menus = computed(() => {
+  switch (role.value) {
+
+    case 'super_admin':
+      return [
+        { group: 'Menu Utama', items: [
+          { name: 'Dashboard', path: '/', icon: 'dashboard' },
+          { name: 'Inbound', path: '/inbound', icon: 'move_to_inbox' },
+          { name: 'Outbound Scanner', path: '/outbound-scan', icon: 'qr_code_scanner' },
+          { name: 'Order', path: '/orders', icon: 'receipt_long' },
+        ]},
+        { group: 'Operasional Lanjutan', items: [
+          { name: 'Retur & Batal', path: '/retur', icon: 'assignment_return' },
+          { name: 'Stock Opname', path: '/opname', icon: 'fact_check' },
+        ]},
+        { group: 'Pengaturan', items: [
+          { name: 'Master Data', path: '/master-data', icon: 'database' },
+          { name: 'Kategori & Brand', path: '/kategori-brand', icon: 'category' },
+          { name: 'Warehouse Mapping', path: '/warehouse-mapping', icon: 'warehouse' },
+          { name: 'Manajemen User', path: '/users', icon: 'group' },
+        ]}
+      ]
+
+    case 'admin':
+      return [
+        { group: 'Menu Utama', items: [
+          { name: 'Dashboard', path: '/', icon: 'dashboard' },
+          { name: 'Inbound', path: '/inbound', icon: 'move_to_inbox' },
+          { name: 'Outbound Scanner', path: '/outbound-scan', icon: 'qr_code_scanner' },
+          { name: 'Order', path: '/orders', icon: 'receipt_long' },
+        ]},
+        { group: 'Operasional Lanjutan', items: [
+          { name: 'Retur & Batal', path: '/retur', icon: 'assignment_return' },
+          { name: 'Stock Opname', path: '/opname', icon: 'fact_check' },
+        ]}
+      ]
+
+    default:
+      return [
+        { group: 'Menu', items: [
+          { name: 'Dashboard', path: '/', icon: 'dashboard' },
+        ]}
+      ]
+  }
+})
+
+// ================= INIT =================
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  const savedUser = localStorage.getItem('user')
+
+  if (!token) return navigateTo('/login')
+
+  if (savedUser) {
+    const user = JSON.parse(savedUser)
+    currentUser.value = user
+    role.value = user.role
+  }
+})
+
+// ================= LOGOUT =================
 const handleLogout = () => {
-  currentUser.value = null
+  localStorage.clear()
   navigateTo('/login')
 }
 </script>

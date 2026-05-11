@@ -1,157 +1,526 @@
 <template>
-  <div class="pb-10 max-w-7xl mx-auto">
-    
-    <nav class="flex items-center text-[11px] md:text-sm font-medium text-gray-500 mb-4 md:mb-6 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
-      <NuxtLink to="/" class="hover:text-blue-600 flex items-center transition-colors group">
-        <span class="material-symbols-outlined text-[16px] md:text-[18px] mr-1 md:mr-1.5 group-hover:text-blue-600 transition-colors">home</span>
-        Dashboard
-      </NuxtLink>
-      <span class="material-symbols-outlined text-[14px] md:text-[18px] text-gray-400 mx-1 md:mx-1.5">chevron_right</span>
-      <NuxtLink to="/inbound" class="hover:text-blue-600 transition-colors">
-        Inbound
-      </NuxtLink>
-      <span class="material-symbols-outlined text-[14px] md:text-[18px] text-gray-400 mx-1 md:mx-1.5">chevron_right</span>
-      <span class="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 md:px-2.5 md:py-1 rounded-md border border-blue-100 shadow-sm">
-        Riwayat Lengkap
-      </span>
-    </nav>
-    
-    <div class="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div class="flex items-center">
-        <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center mr-3 md:mr-4 shrink-0">
-          <span class="material-symbols-outlined text-xl md:text-2xl">history</span>
-        </div>
-        <div>
-          <h2 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">Riwayat Lengkap Inbound</h2>
-          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">Semua data penerimaan barang masuk.</p>
-        </div>
-      </div>
-      
-      <NuxtLink to="/inbound" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 md:py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
-        <span class="material-symbols-outlined text-[16px] md:text-[18px] mr-2">arrow_back</span>
-        Kembali ke Inbound
-      </NuxtLink>
+  <div class="max-w-7xl mx-auto px-4 md:px-0 pb-20 md:pb-10">
+    <!-- BREADCRUMB -->
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+      <NuxtLink to="/" class="hover:text-blue-600">Dashboard</NuxtLink>
+      <span>/</span>
+      <NuxtLink to="/inbound" class="hover:text-blue-600">Inbound</NuxtLink>
+      <span>/</span>
+      <span class="text-gray-700 font-semibold">History</span>
     </div>
-    
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 mb-6 md:mb-8">
-      <div class="relative w-full">
-        <span class="material-symbols-outlined absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg md:text-xl">search</span>
-        <input 
-          v-model="searchQuery" 
-          type="text" 
-          placeholder="Cari SKU, Nama Produk, atau Supplier..." 
-          class="w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors bg-gray-50 hover:bg-white text-gray-800 font-medium"
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
+      <div>
+        <h2 class="text-2xl font-bold">Semua Inbound</h2>
+        <p class="text-sm text-gray-500">Monitoring seluruh barang masuk</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+
+        <!-- RESET -->
+        <button 
+          @click="resetFilter"
+          class="text-sm text-gray-500 hover:text-red-500 transition"
         >
+          Reset Filter
+        </button>
+
+        <!-- KEMBALI -->
+        <NuxtLink
+          to="/inbound"
+          class="inline-flex items-center gap-2 px-3 py-2 rounded-lg 
+                bg-gray-100 text-gray-700 text-sm font-semibold 
+                hover:bg-gray-200 transition"
+        >
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          Kembali
+        </NuxtLink>
+
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div class="overflow-x-auto w-full pb-2">
-        <table class="w-full text-left min-w-[800px] md:min-w-[900px]">
-          <thead class="bg-gray-50/50 text-gray-500 text-[10px] md:text-xs uppercase tracking-wider">
+    <!-- FILTER -->
+    <div class="bg-white p-4 md:p-5 rounded-2xl border mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+
+      <!-- BRAND -->
+      <div>
+        <div class="flex items-center gap-2 mb-2 text-gray-600">
+          <span class="material-symbols-outlined text-sm">store</span>
+          <label class="text-sm font-medium">Filter Brand</label>
+        </div>
+
+        <div ref="brandRef" class="relative">
+          <div @click.stop="toggleBrand" class="dropdown-input">
+            {{ selectedBrandName || 'Semua Brand' }}
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+
+          <div v-if="showBrand" class="dropdown-menu">
+            <div @click="selectBrand(null)" class="dropdown-item">
+              Semua Brand
+            </div>
+
+            <div 
+              v-for="b in brands" 
+              :key="b.id"
+              @click="selectBrand(b)"
+              class="dropdown-item"
+            >
+              {{ b.name }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SKU -->
+      <div>
+        <div class="flex items-center gap-2 mb-2 text-gray-600">
+          <span class="material-symbols-outlined text-sm">inventory_2</span>
+          <label class="text-sm font-medium">Filter Produk (SKU)</label>
+        </div>
+
+        <div ref="productRef" class="relative">
+          <div 
+            @click.stop="toggleProduct"
+            class="dropdown-input"
+            :class="!filter.brand_id && 'opacity-50 cursor-not-allowed'"
+          >
+            {{ selectedProductName || 'Semua SKU' }}
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+
+          <div v-if="showProduct" class="dropdown-menu">
+            <div @click="selectProduct(null)" class="dropdown-item">
+              Semua SKU
+            </div>
+
+            <div 
+              v-for="p in filteredProducts" 
+              :key="p.id"
+              @click="selectProduct(p)"
+              class="dropdown-item"
+            >
+              <div class="font-semibold">{{ p.sku }}</div>
+              <div class="text-xs text-gray-400 line-clamp-1">{{ p.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATE FROM -->
+      <div>
+        <div class="flex items-center gap-2 mb-2 text-gray-600">
+          <span class="material-symbols-outlined text-sm">calendar_month</span>
+          <label class="text-sm font-medium">Dari Tanggal</label>
+        </div>
+
+        <div class="relative">
+          <input 
+            ref="startDateRef"
+            type="text"
+            placeholder="Pilih tanggal..."
+            class="input pr-10"
+            readonly
+          />
+          <span class="material-symbols-outlined icon">calendar_today</span>
+        </div>
+      </div>
+
+      <!-- DATE TO -->
+      <div>
+        <div class="flex items-center gap-2 mb-2 text-gray-600">
+          <span class="material-symbols-outlined text-sm">event</span>
+          <label class="text-sm font-medium">Sampai Tanggal</label>
+        </div>
+
+        <div class="relative">
+          <input 
+            ref="endDateRef"
+            type="text"
+            placeholder="Pilih tanggal..."
+            class="input pr-10"
+            readonly
+          />
+          <span class="material-symbols-outlined icon">calendar_today</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white rounded-2xl border overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs md:text-sm min-w-[750px]">
+
+          <!-- HEADER -->
+          <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
             <tr>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold">Tanggal & Waktu</th>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold">Resi / Dokumen</th>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold">Brand</th>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold">Detail Produk</th>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold text-right">Kuantitas</th>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold">Supplier</th>
-              <th class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 font-semibold text-center">Status</th>
+              <th class="px-3 md:px-6 py-2 md:py-3 text-left">Tanggal</th>
+              <th class="px-3 md:px-6 py-2 md:py-3 text-left">Brand</th>
+              <th class="px-3 md:px-6 py-2 md:py-3 text-left">SKU</th>
+              <th class="px-3 md:px-6 py-2 md:py-3 text-left">Invoice</th>
+              <th class="px-3 md:px-6 py-2 md:py-3 text-right">Qty</th>
+              <th class="px-3 md:px-6 py-2 md:py-3 text-left">Supplier</th>
             </tr>
           </thead>
-          <tbody class="text-sm divide-y divide-gray-100">
-            <tr v-for="(item, index) in filteredHistory" :key="index" class="hover:bg-gray-50/80 transition-colors">
-              <td class="px-4 py-3 md:px-6 md:py-4 whitespace-nowrap">
-                <div class="font-bold text-gray-800 text-xs md:text-sm">{{ item.date }}</div>
-                <div class="text-[10px] md:text-xs text-gray-500 font-medium mt-0.5">{{ item.time }}</div>
-              </td>
-              <td class="px-4 py-3 md:px-6 md:py-4 font-mono text-gray-600 text-[10px] md:text-xs">{{ item.receipt }}</td>
-              <td class="px-4 py-3 md:px-6 md:py-4">
-                <span class="font-medium text-gray-800 bg-gray-100 px-2 py-1 md:px-2.5 md:py-1 rounded-md text-[9px] md:text-[11px] border border-gray-200">{{ item.brand }}</span>
-              </td>
-              <td class="px-4 py-3 md:px-6 md:py-4 min-w-[150px]">
-                <div class="font-bold text-gray-800 text-xs md:text-sm">{{ item.sku }}</div>
-                <div class="text-[10px] md:text-xs text-gray-500 mt-0.5">{{ item.name }}</div>
-              </td>
-              <td class="px-4 py-3 md:px-6 md:py-4 text-right">
-                <span class="font-bold text-green-600 bg-green-50 px-2 py-0.5 md:px-2.5 md:py-1 rounded-md border border-green-100 text-xs md:text-sm">+{{ item.qty.toLocaleString('id-ID') }}</span>
-              </td>
-              <td class="px-4 py-3 md:px-6 md:py-4 text-gray-600 font-medium text-xs md:text-sm">{{ item.supplier }}</td>
-              <td class="px-4 py-3 md:px-6 md:py-4 flex justify-center">
-                <span v-if="item.status === 'Selesai'" class="inline-flex items-center justify-center bg-green-50 text-green-700 px-2 py-1 md:px-2.5 md:py-1 rounded-md text-[10px] md:text-xs font-bold w-full max-w-[90px] md:max-w-[110px] border border-green-100">
-                  <span class="material-symbols-outlined text-[12px] md:text-[14px] mr-1">check_circle</span> Selesai
-                </span>
-                <span v-else class="inline-flex items-center justify-center bg-yellow-50 text-yellow-700 px-2 py-1 md:px-2.5 md:py-1 rounded-md text-[10px] md:text-xs font-bold w-full max-w-[90px] md:max-w-[110px] border border-yellow-200">
-                  <span class="material-symbols-outlined text-[12px] md:text-[14px] mr-1">pending</span> Pending
-                </span>
+
+          <tbody class="divide-y">
+
+            <!-- 🔥 SKELETON -->
+            <tr v-if="loading">
+              <td colspan="6" class="p-0">
+                <div class="p-6 space-y-4">
+
+                  <div 
+                    v-for="n in 8" 
+                    :key="n" 
+                    class="grid grid-cols-6 gap-4 items-center"
+                  >
+                    <div class="skeleton h-4 w-24"></div> <!-- tanggal -->
+                    <div class="skeleton h-4 w-28"></div> <!-- brand -->
+                    <div class="space-y-1">
+                      <div class="skeleton h-4 w-32"></div> <!-- sku -->
+                      <div class="skeleton h-3 w-40"></div> <!-- nama -->
+                    </div>
+                    <div class="skeleton h-4 w-28"></div> <!-- invoice -->
+                    <div class="flex justify-end">
+                      <div class="skeleton h-6 w-12 rounded-full"></div> <!-- qty badge -->
+                    </div>
+                    <div class="skeleton h-4 w-28"></div> <!-- supplier -->
+                  </div>
+
+                </div>
               </td>
             </tr>
 
-            <tr v-if="filteredHistory.length === 0">
-              <td colspan="7" class="px-4 py-12 md:px-6 md:py-16 text-center text-gray-400">
-                <span class="material-symbols-outlined text-4xl md:text-5xl block mb-2 md:mb-3 opacity-20">search_off</span>
-                <span class="font-medium text-sm">Tidak ada riwayat inbound yang sesuai.</span>
+            <!-- ✅ DATA -->
+            <tr 
+              v-for="item in filteredInbound" 
+              :key="item.id" 
+              class="hover:bg-gray-50 transition"
+            >
+              <td class="px-3 md:px-6 py-2 md:py-4 text-gray-600">
+                {{ formatDate(item.created_at) }}
+              </td>
+
+              <td class="px-3 md:px-6 py-2 md:py-4">
+                {{ item.product?.brand?.name || '-' }}
+              </td>
+
+              <td class="px-3 md:px-6 py-2 md:py-4">
+                <div class="font-semibold text-gray-800">
+                  {{ item.product?.sku || '-' }}
+                </div>
+                <div class="text-xs text-gray-400">
+                  {{ item.product?.name || '' }}
+                </div>
+              </td>
+
+              <td class="px-3 md:px-6 py-2 md:py-4 font-mono text-gray-800">
+                {{ item.reference_number || '-' }}
+              </td>
+
+              <td class="px-3 md:px-6 py-2 md:py-4 text-right">
+                <span class="bg-green-100 text-green-700 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-bold">
+                  +{{ item.quantity }}
+                </span>
+              </td>
+
+              <td class="px-3 md:px-6 py-2 md:py-4 text-gray-700">
+                {{ item.supplier || '-' }}
               </td>
             </tr>
+
+            <!-- EMPTY -->
+            <tr v-if="!loading && !filteredInbound.length">
+              <td colspan="6" class="text-center py-10 text-gray-400">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="material-symbols-outlined text-3xl">inventory_2</span>
+                  <span>Tidak ada data inbound</span>
+                </div>
+              </td>
+            </tr>
+
           </tbody>
         </table>
-      </div>
-      
-      <div class="px-4 py-3 md:px-6 md:py-4 border-t border-gray-100 bg-gray-50/30 flex flex-col sm:flex-row justify-between items-center gap-3 md:gap-4 text-xs md:text-sm text-gray-500">
-        <span class="font-medium">Menampilkan {{ filteredHistory.length }} data</span>
-        <div class="flex gap-2 w-full sm:w-auto justify-center">
-          <button class="flex-1 sm:flex-none px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 font-medium transition-colors" disabled>Prev</button>
-          <button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold shadow-sm">1</button>
-          <button class="flex-1 sm:flex-none px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 font-medium transition-colors" disabled>Next</button>
-        </div>
-      </div>
+      </div> 
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
-const currentUser = useState('user')
-if (!currentUser.value) {
-  navigateTo('/login')
+definePageMeta({
+  middleware: 'auth'
+})
+
+const { $api } = useNuxtApp()
+
+// =====================
+// STATE
+// =====================
+const loading = ref(true)
+
+const brands = ref([])
+const products = ref([])
+const transactions = ref([])
+
+// =====================
+// DATEPICKER
+// =====================
+const startDateRef = ref(null)
+const endDateRef = ref(null)
+
+let startPicker = null
+let endPicker = null
+
+// =====================
+// DROPDOWN STATE
+// =====================
+const showBrand = ref(false)
+const showProduct = ref(false)
+
+const brandRef = ref(null)
+const productRef = ref(null)
+
+// =====================
+// FETCH DATA
+// =====================
+const fetchData = async () => {
+  loading.value = true
+
+  try {
+    const [b, p, t] = await Promise.all([
+      $api('/brands'),
+      $api('/products'),
+      $api('/transactions')
+    ])
+
+    brands.value = Array.isArray(b) ? b : b.data || []
+    products.value = Array.isArray(p) ? p : p.data || []
+    transactions.value = Array.isArray(t) ? t : t.data || []
+
+  } catch (err) {
+    console.log('❌ FETCH ERROR:', err)
+  } finally {
+    loading.value = false
+  }
 }
 
-const searchQuery = ref('')
-const globalSelectedBrand = useState('selectedBrand')
+// =====================
+// FILTER STATE
+// =====================
+const filter = ref({
+  brand_id: '',
+  product_id: '',
+  start_date: '',
+  end_date: ''
+})
 
-const allHistory = [
-  { date: '27 Mar 2026', time: '08:30 WIB', receipt: 'INB-20260327-01', brand: 'CA SKIN GLOW', sku: 'CASM001', name: 'White Truffle Serum Mist', qty: 500, supplier: 'PT Makmur Skincare', status: 'Selesai' },
-  { date: '27 Mar 2026', time: '10:15 WIB', receipt: 'INB-20260327-02', brand: 'Packaging Packing', sku: 'POLY02', name: 'Polymailer 30 x 30', qty: 1000, supplier: 'Supplier Plastik PT', status: 'Selesai' },
-  { date: '26 Mar 2026', time: '14:20 WIB', receipt: 'INB-20260326-01', brand: 'Brand X', sku: 'BRX-001', name: 'Facial Wash Extra', qty: 50, supplier: 'Pabrik Kosmetik Indah', status: 'Selesai' },
-  { date: '25 Mar 2026', time: '09:00 WIB', receipt: 'INB-20260325-01', brand: 'CA SKIN GLOW', sku: 'CAM001', name: 'Cooper Moisturizer 10 gr', qty: 200, supplier: 'PT Makmur Skincare', status: 'Selesai' },
-  { date: '25 Mar 2026', time: '09:05 WIB', receipt: 'INB-20260325-02', brand: 'CA SKIN GLOW', sku: 'CAS001', name: 'Cooper Peptide Luxe Serum', qty: 150, supplier: 'PT Makmur Skincare', status: 'QC Pending' },
-  { date: '20 Mar 2026', time: '11:30 WIB', receipt: 'INB-20260320-01', brand: 'Packaging Packing', sku: 'POLY01', name: 'Polymailer 17 x 30', qty: 500, supplier: 'Supplier Plastik PT', status: 'Selesai' },
-]
-
-const filteredHistory = computed(() => {
-  if (!currentUser.value) return []
-
-  let result = allHistory
-
-  if (currentUser.value.role !== 'super_admin') {
-    result = result.filter(item => item.brand === currentUser.value.assigned_brand)
-  } else {
-    if (globalSelectedBrand.value && globalSelectedBrand.value !== 'Semua Brand') {
-      result = result.filter(item => item.brand === globalSelectedBrand.value)
-    }
+// =====================
+// RESET FILTER
+// =====================
+const resetFilter = () => {
+  filter.value = {
+    brand_id: '',
+    product_id: '',
+    start_date: '',
+    end_date: ''
   }
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(item => 
-      item.sku.toLowerCase().includes(query) || 
-      item.name.toLowerCase().includes(query) ||
-      item.supplier.toLowerCase().includes(query) ||
-      item.receipt.toLowerCase().includes(query)
-    )
+  if (startPicker) startPicker.clearSelection()
+  if (endPicker) endPicker.clearSelection()
+}
+
+// =====================
+// DROPDOWN - BRAND
+// =====================
+const toggleBrand = () => {
+  showBrand.value = !showBrand.value
+}
+
+const selectBrand = (b) => {
+  filter.value.brand_id = b?.id || ''
+  filter.value.product_id = ''
+  showBrand.value = false
+}
+
+const selectedBrandName = computed(() => {
+  return brands.value.find(b => b.id == filter.value.brand_id)?.name
+})
+
+// =====================
+// DROPDOWN - PRODUCT
+// =====================
+const toggleProduct = () => {
+  if (!filter.value.brand_id) return
+  showProduct.value = !showProduct.value
+}
+
+const selectProduct = (p) => {
+  filter.value.product_id = p?.id || ''
+  showProduct.value = false
+}
+
+const selectedProductName = computed(() => {
+  const p = products.value.find(p => p.id == filter.value.product_id)
+  return p ? `${p.sku} - ${p.name}` : ''
+})
+
+// =====================
+// FILTER PRODUCT
+// =====================
+const filteredProducts = computed(() => {
+  if (!filter.value.brand_id) return products.value
+  return products.value.filter(p => p.brand_id == filter.value.brand_id)
+})
+
+// =====================
+// FILTER INBOUND
+// =====================
+const filteredInbound = computed(() => {
+  return transactions.value
+    .filter(t => t.type === 'inbound')
+    .filter(t => {
+
+      if (filter.value.brand_id && t.product?.brand_id != filter.value.brand_id) return false
+      if (filter.value.product_id && t.product_id != filter.value.product_id) return false
+
+      if (filter.value.start_date) {
+        if (new Date(t.created_at) < new Date(filter.value.start_date)) return false
+      }
+
+      if (filter.value.end_date) {
+        if (new Date(t.created_at) > new Date(filter.value.end_date)) return false
+      }
+
+      return true
+    })
+})
+
+// =====================
+// FORMAT DATE
+// =====================
+const formatDate = (d) => {
+  if (!d) return '-'
+  return new Date(d).toLocaleDateString('id-ID')
+}
+
+// =====================
+// CLICK OUTSIDE
+// =====================
+const handleClickOutside = (e) => {
+  if (brandRef.value && !brandRef.value.contains(e.target)) {
+    showBrand.value = false
   }
 
-  return result
+  if (productRef.value && !productRef.value.contains(e.target)) {
+    showProduct.value = false
+  }
+}
+
+// =====================
+// INIT
+// =====================
+onMounted(async () => {
+  await fetchData()
+
+  document.addEventListener('click', handleClickOutside)
+
+  // ✅ SSR SAFE DATEPICKER
+  if (process.client) {
+    const Litepicker = (await import('litepicker')).default
+    await import('litepicker/dist/css/litepicker.css')
+
+    startPicker = new Litepicker({
+      element: startDateRef.value,
+      singleMode: true,
+      format: 'YYYY-MM-DD',
+      dropdowns: {
+        minYear: 2020,
+        maxYear: 2035,
+        months: true,
+        years: true
+      },
+      setup: (picker) => {
+        picker.on('selected', (date) => {
+          filter.value.start_date = date.format('YYYY-MM-DD')
+        })
+      }
+    })
+
+    endPicker = new Litepicker({
+      element: endDateRef.value,
+      singleMode: true,
+      format: 'YYYY-MM-DD',
+      dropdowns: {
+        minYear: 2020,
+        maxYear: 2035,
+        months: true,
+        years: true
+      },
+      setup: (picker) => {
+        picker.on('selected', (date) => {
+          filter.value.end_date = date.format('YYYY-MM-DD')
+        })
+      }
+    })
+  }
+})
+
+// =====================
+// CLEANUP
+// =====================
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+
+  if (startPicker) startPicker.destroy()
+  if (endPicker) endPicker.destroy()
 })
 </script>
+
+<style scoped>
+.input {
+  @apply w-full border rounded-lg px-3 py-2 pr-10 text-sm 
+  focus:ring-2 focus:ring-blue-500 outline-none appearance-none;
+}
+
+.input {
+  @apply w-full border rounded-xl px-4 py-3 text-sm;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 25%,
+    #e5e7eb 37%,
+    #f3f4f6 63%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.2s infinite linear;
+  border-radius: 6px;
+}
+
+.icon {
+  @apply absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none;
+}
+
+.dropdown-input {
+  @apply w-full border rounded-xl px-4 py-2 bg-white flex justify-between items-center cursor-pointer shadow-sm;
+}
+
+.dropdown-menu {
+  @apply absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-lg border max-h-60 overflow-auto;
+}
+
+.dropdown-item {
+  @apply px-4 py-3 cursor-pointer hover:bg-gray-100 transition;
+}
+</style>
