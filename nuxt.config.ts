@@ -8,7 +8,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: 'https://cd31-118-137-62-156.ngrok-free.app/api'
+      apiBase: 'https://aa14-2400-9800-9b2-5623-7868-912c-7b31-a15e.ngrok-free.app/api'
     }
   },
 
