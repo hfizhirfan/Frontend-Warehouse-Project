@@ -141,10 +141,10 @@ if (!currentUser.value) {
 const loading = ref(false)
 
 // 2. Ambil data API Produk (untuk Dropdown)
-const { data: apiResponse } = await useFetch('http://127.0.0.1:8000/api/products')
+const { data: apiResponse } = await useFetch('https://cd31-118-137-62-156.ngrok-free.app/api/products')
 
 // 3. Ambil data API Riwayat Inbound (untuk Tabel)
-const { data: historyResponse, refresh: refreshHistory } = await useFetch('http://127.0.0.1:8000/api/inbounds')
+const { data: historyResponse, refresh: refreshHistory } = await useFetch('https://cd31-118-137-62-156.ngrok-free.app/api/inbounds')
 
 // 4. State Form
 const form = ref({
@@ -191,7 +191,7 @@ const submitInbound = async () => {
 
   loading.value = true
   try {
-    const res = await $fetch('http://127.0.0.1:8000/api/inbounds', {
+    const res = await $fetch('https://cd31-118-137-62-156.ngrok-free.app/api/inbounds', {
       method: 'POST',
       body: form.value
     })

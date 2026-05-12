@@ -91,5 +91,5 @@
 <script setup>
 // Menarik data langsung dari mesin Laravel
 // Nuxt akan otomatis menaruh hasil JSON-nya ke dalam variabel 'response'
-const { data: response } = await useFetch('http://127.0.0.1:8000/api/products')
+const { data: response } = await useFetch('https://cd31-118-137-62-156.ngrok-free.app/api/products')
 </script>

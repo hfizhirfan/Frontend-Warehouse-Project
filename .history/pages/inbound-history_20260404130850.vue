@@ -118,7 +118,7 @@ const searchQuery = ref('')
 const globalSelectedBrand = useState('selectedBrand')
 
 // Mengambil data riwayat khusus Inbound dari Laravel
-const { data: apiResponse } = await useFetch('http://127.0.0.1:8000/api/inbounds')
+const { data: apiResponse } = await useFetch('https://cd31-118-137-62-156.ngrok-free.app/api/inbounds')
 
 // Fungsi untuk memformat tanggal (contoh: 27 Mar 2026)
 const formatDate = (dateString) => {

@@ -120,7 +120,7 @@ if (!currentUser.value) {
 }
 
 // 2. Ambil data API Produk dari Laravel
-const { data: apiResponse } = await useFetch('http://127.0.0.1:8000/api/products')
+const { data: apiResponse } = await useFetch('https://cd31-118-137-62-156.ngrok-free.app/api/products')
 
 // 3. Siapkan Keranjang (Form) untuk menampung ketikan user
 const form = ref({

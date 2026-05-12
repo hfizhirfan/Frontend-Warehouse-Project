@@ -116,7 +116,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const BASE_URL = 'http://127.0.0.1:8000/api'
+const BASE_URL = 'https://cd31-118-137-62-156.ngrok-free.app/api'
 
 // ================= STATE =================
 const bundle_id = ref('')

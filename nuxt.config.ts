@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -7,10 +6,15 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss'
   ],
 
+  runtimeConfig: {
+    public: {
+      apiBase: 'https://cd31-118-137-62-156.ngrok-free.app/api'
+    }
+  },
+
   app: {
     layoutTransition: { name: 'layout', mode: 'out-in' },
 
-    // ✅ TAMBAHKAN DI SINI
     head: {
       link: [
         {

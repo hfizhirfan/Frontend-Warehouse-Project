@@ -1,6 +1,6 @@
 export default defineNuxtPlugin(() => {
   const api = $fetch.create({
-    baseURL: 'http://127.0.0.1:8000/api',
+    baseURL: 'https://cd31-118-137-62-156.ngrok-free.app/api',
 
     onRequest({ options }) {
       const token = localStorage.getItem('token')
@@ -9,7 +9,8 @@ export default defineNuxtPlugin(() => {
 
       options.headers = {
         ...(options.headers || {}),
-        Accept: 'application/json'
+        Accept: 'application/json',
+        'ngrok-skip-browser-warning': 'true' // ✨ TAMBAHKAN BARIS INI
       }
 
       if (token) {

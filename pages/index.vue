@@ -234,9 +234,15 @@ const totalStok = ref(0)
 const totalInbound = ref(0)
 const lowStockCount = ref(0)
 
-// FETCH FUNCTION (dipisah biar clean)
 const fetchDashboard = async () => {
-  const res = await $api('/dashboard')
+  const token = localStorage.getItem('token')
+
+  const res = await $api('/dashboard', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'ngrok-skip-browser-warning': 'true'
+    }
+  })
 
   products.value = res.products.map(p => ({
     brand: p.brand?.name || '-',
