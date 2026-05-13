@@ -119,7 +119,7 @@ const submitInbound = async () => {
 
   try {
     // 1. Kirim data ke API Laravel menggunakan POST
-    const res = await $fetch('https://562e-140-213-40-142.ngrok-free.app/api/inbounds', {
+    const res = await $fetch('https://1ea1-118-137-62-156.ngrok-free.app/api/inbounds', {
       method: 'POST',
       body: form.value
     })

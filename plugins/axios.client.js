@@ -1,6 +1,6 @@
 export default defineNuxtPlugin(() => {
   const api = $fetch.create({
-    baseURL: 'https://562e-140-213-40-142.ngrok-free.app/api',
+    baseURL: 'https://1ea1-118-137-62-156.ngrok-free.app/api',
 
     onRequest({ options }) {
       const token = localStorage.getItem('token')
