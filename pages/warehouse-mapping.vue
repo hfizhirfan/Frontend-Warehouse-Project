@@ -127,7 +127,7 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
-const BASE_URL = 'https://9eb8-118-137-62-156.ngrok-free.app/api'
+const BASE_URL = 'https://9d55-140-213-218-16.ngrok-free.app/api'
 
 export default {
   data() {
