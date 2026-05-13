@@ -118,7 +118,7 @@ const searchQuery = ref('')
 const globalSelectedBrand = useState('selectedBrand')
 
 // 1. Tambahkan 'refresh' dan 'pending'
-const { data: apiResponse, refresh, pending } = await useFetch('https://1ea1-118-137-62-156.ngrok-free.app/api/inbounds', {
+const { data: apiResponse, refresh, pending } = await useFetch('https://9eb8-118-137-62-156.ngrok-free.app/api/inbounds', {
   // Agar data selalu segar setiap kali halaman dibuka
   key: 'inbound-history',
   server: false 
